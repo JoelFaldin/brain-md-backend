@@ -1,6 +1,7 @@
 package com.example.brainmd.auth;
 
 import com.example.brainmd.auth.dto.GoogleDto;
+import com.example.brainmd.auth.dto.GoogleUserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,13 +25,17 @@ public class AuthController {
     @PostMapping("/google")
     public ResponseEntity<?> googleAuth(@RequestBody GoogleDto googleDto) {
         try {
-            String token = authService.generateToken(googleDto.getEmail(), googleDto.getName());
+            GoogleUserDto response = authService.getGoogleData(googleDto.getToken());
+            String token = authService.generateToken(response.getEmail(), response.getName());
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("response", "generated");
-            response.put("token", token);
+            Map<String, Object> res = new HashMap<>();
+            res.put("response", "generated");
+            res.put("token", token);
+            res.put("name", response.getName());
+            res.put("email", response.getEmail());
+            res.put("picture", response.getPicture());
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(res);
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token.");

@@ -1,10 +1,16 @@
 package com.example.brainmd.auth;
 
+import com.example.brainmd.auth.dto.GoogleUserDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.security.Key;
 import java.util.Date;
@@ -34,5 +40,26 @@ public class AuthService {
                 .setExpiration(expiration)
                 .signWith(key)
                 .compact();
+    }
+
+    @Value("${google.url}")
+    private String googleUrl;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    public GoogleUserDto getGoogleData(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<GoogleUserDto> response = restTemplate.exchange(
+                googleUrl,
+                HttpMethod.GET,
+                entity,
+                GoogleUserDto.class
+        );
+
+        return response.getBody();
     }
 }
