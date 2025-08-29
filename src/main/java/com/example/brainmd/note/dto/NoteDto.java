@@ -6,14 +6,15 @@ public class NoteDto {
 
     @NotBlank(message = "Title can't be empty!")
     private String title;
-
     private String content;
+    private String userEmail;
 
     protected NoteDto() {}
 
-    public NoteDto(String title, String content) {
+    public NoteDto(String title, String content, String userEmail) {
         this.title = title;
         this.content = content;
+        this.userEmail = userEmail;
     }
 
     // Getters and setters:
@@ -25,12 +26,18 @@ public class NoteDto {
         return this.content;
     }
 
+    public String getUserEmail() { return this.userEmail; }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setContent() {
+    public void setContent(String content) {
         this.content = content;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     @Override
